@@ -56,10 +56,22 @@ in {
   ### =====================
   ### Dotfiles
   ### =====================
-  home.file.".vimrc".source = "${repos.exec.dst}/etc/vimrc";
-  home.file.".pypirc".source = "${repos.secret.dst}/etc/pypirc";
-  home.file.".gitconfig".source = "${repos.personal.dst}/etc/gitconfig";
-  home.file.".profile".source = "${repos.personal.dst}/etc/profile";
+  home.file.".vimrc" = {
+    source = "${repos.exec.dst}/etc/vimrc";
+    force = true;
+  };
+  home.file.".pypirc" = {
+    source = "${repos.secret.dst}/etc/pypirc";
+    force = true;
+  };
+  home.file.".gitconfig" = {
+    source = "${repos.personal.dst}/etc/gitconfig";
+    force = true;
+  };
+  home.file.".profile" = {
+    source = "${repos.personal.dst}/etc/profile";
+    force = true;
+  };
 
   ### =====================
   ### Bash
