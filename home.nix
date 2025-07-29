@@ -44,7 +44,6 @@ in {
     openssh
     dconf
     dconf-editor
-    google-chrome
     home-manager
   ];
 
