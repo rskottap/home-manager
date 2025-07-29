@@ -45,7 +45,7 @@ in {
   ### =====================
   ### Clone Repos & Create Dirs
   ### =====================
-  home.activation.setupEnvironment = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.setupEnvironment = lib.hm.dag.entryAfter ["writeBoundary" "installPackages"] ''
 
     mkdir -pv ${lib.concatStringsSep " " desktopDirs}
 
@@ -126,7 +126,7 @@ in {
   ### =====================
   ### Shortcut Setup Scripts
   ### =====================
-  home.activation.setupShortcuts = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.setupShortcuts = lib.hm.dag.entryAfter [ "writeBoundary" "installPackages"] ''
     echo "⚙️ Running shortcut configuration scripts..."
     bash "${repos.shortcuts.dst}/cinnamon/custom-shortcuts-setup" || true
     bash "${repos.shortcuts.dst}/vscode/vscode-shortcuts-setup" || true
@@ -135,7 +135,7 @@ in {
   ### =====================
   ### Symlinks for home.nix and configuration.nix
   ### =====================
-  home.activation.setupNixosSymlinks = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.setupNixosSymlinks = lib.hm.dag.entryAfter [ "writeBoundary" "installPackages"] ''
     if [ -d /etc/nixos ]; then
       sudo ln -svf "${repos.nixos.dst}/configuration.nix" /etc/nixos/configuration.nix
     fi
