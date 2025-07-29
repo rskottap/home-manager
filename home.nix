@@ -1,7 +1,6 @@
 { config, pkgs, lib, ... }:
 
 let
-  homeDir = config.home.homeDirectory;
 
   repos = {
     exec = {
@@ -31,8 +30,7 @@ let
     "${homeDir}/Desktop/obsidian"
   ];
 in {
-  home.username = "ramya";
-  home.homeDirectory = homeDir;
+
   home.stateVersion = "25.05";
 
   ### =====================
