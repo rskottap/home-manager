@@ -108,6 +108,12 @@ in {
     '';
   };
 
+  # ~/.config/gh
+  programs.gh = {
+    enable = true;
+    gitCredentialHelper.enable = true;
+  };
+
   dconf.settings = {
     "org/cinnamon/desktop/interface" = {
       gtk-theme = "CBlack";
