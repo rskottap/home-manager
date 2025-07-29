@@ -2,10 +2,7 @@
 
 let
   user = "ramya";
-  # NOPE, GIVES EMPTY
-  # homeDir = builtins.getEnv "HOME";  # <-- Safe and pure
-  # Doesn't like it if it's an absolute path to /home/ here, cause it's not pure
-
+  
   repos = {
     exec = {
       src = "https://github.com/thedynamiclinker/exec";
@@ -34,84 +31,83 @@ let
     "${config.home.homeDirectory}/Desktop/obsidian"
     "${config.home.homeDirectory}/Desktop/repos"
   ];
+
 in {
 
   home.username = user;
-  # Needs to be an absolute path here
-  home.homeDirectory = "/home/${user}";
+  home.homeDirectory = lib.mkDefault "/home/${user}";
   nixpkgs.config.allowUnfree = true;
   home.stateVersion = "25.05";
 
-  ### =====================
-  ### Clone Repos & Create Dirs
-  ### =====================
-  home.activation.setupEnvironment = lib.hm.dag.entryAfter ["writeBoundary" "installPackages"] ''
+  home.packages = with pkgs; [
+    git
+    openssh
+    dconf
+    dconf-editor
+    google-chrome
+    home-manager
+  ];
 
+  home.activation.cloneRepos = lib.hm.dag.entryAfter ["writeBoundary" "installPackages"] ''
     mkdir -pv ${lib.concatStringsSep " " desktopDirs}
 
-    echo "🔁 Cloning personal repos and setting up directories..."
+    export PATH="${pkgs.git}/bin:$PATH"
+    export PATH="${pkgs.openssh}/bin/:$PATH"
 
     ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: r:
       ''
         if [ ! -d "${r.dst}" ]; then
-          echo "Cloning ${name}..."
-          git clone ${r.src} "${r.dst}" || echo "❌ Failed to clone ${name}"
+          git clone "${r.src}" "${r.dst}"
+          echo "✅  Cloned ${name}."
         fi
       ''
     ) repos)}
-
   '';
 
-  ### =====================
-  ### Dotfiles
-  ### =====================
-  home.file.".vimrc" = {
-    source = "${repos.exec.dst}/etc/vimrc";
-    force = true;
-  };
-  home.file.".pypirc" = {
-    source = "${repos.secret.dst}/etc/pypirc";
-    force = true;
-  };
-  home.file.".gitconfig" = {
-    source = "${repos.personal.dst}/etc/gitconfig";
-    force = true;
-  };
-  home.file.".profile" = {
-    source = "${repos.personal.dst}/etc/profile";
-    force = true;
-  };
+  home.activation.setupDotfiles = lib.hm.dag.entryAfter ["cloneRepos"] ''
+    ln -svf "${repos.exec.dst}/etc/vimrc" ~/.vimrc
+    ln -svf "${repos.secret.dst}/etc/pypirc" ~/.pypirc
+    ln -svf "${repos.personal.dst}/etc/gitconfig" ~/.gitconfig
+  '';
 
-  ### =====================
-  ### Bash
-  ### =====================
+  home.activation.setupShortcuts = lib.hm.dag.entryAfter ["setupDotfiles"] ''
+    export PATH="${pkgs.dconf}/bin:$PATH"
+
+    if [ -f "${repos.shortcuts.dst}/cinnamon/custom-shortcuts-setup" ]; then
+      cd "${repos.shortcuts.dst}/cinnamon/" && bash "./custom-shortcuts-setup"
+    fi
+    
+    if [ -f "${repos.shortcuts.dst}/vscode/vscode-shortcuts-setup" ]; then
+      cd "${repos.shortcuts.dst}/vscode/" && bash "./vscode-shortcuts-setup"
+    fi
+    echo "✅ Setup Shortcuts."
+  '';
+
+  home.activation.setupNixosSymlinks = lib.hm.dag.entryAfter ["setupShortcuts"] ''
+    if [ -d /etc/nixos ] && [ -f "${repos.nixos.dst}/configuration.nix" ]; then
+      sudo ln -svf "${repos.nixos.dst}/configuration.nix" /etc/nixos/configuration.nix
+      echo "✅ Symlinked NixOS configuration.nix."
+    fi
+  '';
+
   programs.bash = {
     enable = true;
     bashrcExtra = ''
-      source "${repos.exec.dst}/etc/bashrc"
-      source "${repos.personal.dst}/etc/bashrc"
-      source "${repos.secret.dst}/etc/bashrc"
-
-      for f in "${repos.personal.dst}"/etc/bash_completion.d/*; do
-        [ -f "$f" ] && source "$f"
+      for config_file in \
+        "${repos.exec.dst}/etc/bashrc" \
+        "${repos.personal.dst}/etc/bashrc" \
+        "${repos.secret.dst}/etc/bashrc"; do
+        [ -f "$config_file" ] && source "$config_file"
       done
+
+      if [ -d "${repos.personal.dst}/etc/bash_completion.d" ]; then
+        for f in "${repos.personal.dst}"/etc/bash_completion.d/*; do
+          [ -f "$f" ] && source "$f"
+        done
+      fi
     '';
   };
 
-  ### =====================
-  ### Minimal packages required to do this
-  ### =====================
-
-  home.packages = with pkgs; [
-    git
-    dconf
-    dconf-editor
-    google-chrome
-  ];
-
-  ### =====================
-  ### Cinnamon / GTK / Themes (Optional, ignored on non-Cinnamon)
-  ### =====================
   dconf.settings = {
     "org/cinnamon/desktop/interface" = {
       gtk-theme = "CBlack";
@@ -123,24 +119,4 @@ in {
     };
   };
 
-  ### =====================
-  ### Shortcut Setup Scripts
-  ### =====================
-  home.activation.setupShortcuts = lib.hm.dag.entryAfter [ "writeBoundary" "installPackages"] ''
-    echo "⚙️ Running shortcut configuration scripts..."
-    bash "${repos.shortcuts.dst}/cinnamon/custom-shortcuts-setup" || true
-    bash "${repos.shortcuts.dst}/vscode/vscode-shortcuts-setup" || true
-  '';
-
-  ### =====================
-  ### Symlinks for home.nix and configuration.nix
-  ### =====================
-  home.activation.setupNixosSymlinks = lib.hm.dag.entryAfter [ "writeBoundary" "installPackages"] ''
-    if [ -d /etc/nixos ]; then
-      sudo ln -svf "${repos.nixos.dst}/configuration.nix" /etc/nixos/configuration.nix
-    fi
-
-    mkdir -p ~/.config/home-manager
-    ln -svf "${repos.nixos.dst}/home.nix" ~/.config/home-manager/home.nix
-  '';
 }
