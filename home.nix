@@ -13,7 +13,7 @@ let
       dst = "${config.home.homeDirectory}/Desktop/repos/personal";
     };
     secret = {
-      src = "git@github.com:rskottap/secret.git";
+      src = "https://github.com/rskottap/secret";
       dst = "${config.home.homeDirectory}/Desktop/repos/secret";
     };
     shortcuts = {
