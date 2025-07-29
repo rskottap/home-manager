@@ -6,6 +6,6 @@ See `home.nix`.
 Uses prefixes workflow for setting up dotfiles.
 
 ```bash
-home-manager switch --flake .#ramya
+home-manager switch
+systemctl status "home-manager-$USER.service"
 ```
-

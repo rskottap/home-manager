@@ -1,45 +1,55 @@
 { config, pkgs, lib, ... }:
 
 let
+  user = "ramya";
+  # NOPE, GIVES EMPTY
+  # homeDir = builtins.getEnv "HOME";  # <-- Safe and pure
+  # Doesn't like it if it's an absolute path to /home/ here, cause it's not pure
 
   repos = {
     exec = {
       src = "https://github.com/thedynamiclinker/exec";
-      dst = "${homeDir}/Desktop/repos/exec";
+      dst = "${config.home.homeDirectory}/Desktop/repos/exec";
     };
     personal = {
       src = "https://github.com/rskottap/personal";
-      dst = "${homeDir}/Desktop/repos/personal";
+      dst = "${config.home.homeDirectory}/Desktop/repos/personal";
     };
     secret = {
       src = "git@github.com:rskottap/secret.git";
-      dst = "${homeDir}/Desktop/repos/secret";
+      dst = "${config.home.homeDirectory}/Desktop/repos/secret";
     };
     shortcuts = {
       src = "https://github.com/rskottap/shortcuts";
-      dst = "${homeDir}/Desktop/repos/shortcuts";
+      dst = "${config.home.homeDirectory}/Desktop/repos/shortcuts";
     };
     nixos = {
       src = "https://github.com/rskottap/nixos";
-      dst = "${homeDir}/Desktop/repos/nixos";
+      dst = "${config.home.homeDirectory}/Desktop/repos/nixos";
     };
   };
 
   desktopDirs = [
-    "${homeDir}/Desktop/screenshots"
-    "${homeDir}/Desktop/obsidian"
+    "${config.home.homeDirectory}/Desktop/screenshots"
+    "${config.home.homeDirectory}/Desktop/obsidian"
+    "${config.home.homeDirectory}/Desktop/repos"
   ];
 in {
 
+  home.username = user;
+  # Needs to be an absolute path here
+  home.homeDirectory = "/home/${user}";
+  nixpkgs.config.allowUnfree = true;
   home.stateVersion = "25.05";
 
   ### =====================
   ### Clone Repos & Create Dirs
   ### =====================
   home.activation.setupEnvironment = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    echo "🔁 Cloning personal repos and setting up directories..."
 
-    mkdir -pv ${homeDir}/Desktop/repos
+    mkdir -pv ${lib.concatStringsSep " " desktopDirs}
+
+    echo "🔁 Cloning personal repos and setting up directories..."
 
     ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: r:
       ''
@@ -50,7 +60,6 @@ in {
       ''
     ) repos)}
 
-    mkdir -pv ${lib.concatStringsSep " " desktopDirs}
   '';
 
   ### =====================
