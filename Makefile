@@ -1,12 +1,11 @@
+home:
+	home-manager switch --flake .#default
+
 nix-install:
-	./install.sh install
+	sh <(curl -L https://nixos.org/nix/install) --daemon
 
 add-channel:
 	nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
 
 update:
 	nix-channel --update
-
-home:
-	nix run github:nix-community/home-manager --experimental-features 'nix-command flakes' -- switch -b backup
-	nix run .#homeConfigurations.default.activationPackage
