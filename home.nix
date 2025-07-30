@@ -56,7 +56,6 @@ in {
     openssh
     dconf
     dconf-editor
-    home-manager
   ];
 
   home.activation.cloneRepos = lib.hm.dag.entryAfter ["writeBoundary" "installPackages"] ''
@@ -147,5 +146,7 @@ in {
       package = pkgs.kora-icon-theme;
     };
   };
+  # Let Home Manager install and manage itself.
+  #programs.home-manager.enable = true;
 
 }
