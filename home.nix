@@ -1,32 +1,34 @@
 { config, pkgs, lib, ... }:
 
 let
+
   user = "ramya";
-  
+  dst = "${config.home.homeDirectory}/Desktop/repos";
+
   exec = {
     name = "exec";
     src = "https://github.com/thedynamiclinker/exec";
-  dst = "${config.home.homeDirectory}/Desktop/repos/exec";
+    dst = "${dst}/exec";
   };
   personal = {
     name = "personal";
     src = "https://github.com/rskottap/personal";
-    dst = "${config.home.homeDirectory}/Desktop/repos/personal";
+    dst = "${dst}/personal";
   };
   secret = {
     name = "secret";
     src = "https://github.com/rskottap/secret";
-    dst = "${config.home.homeDirectory}/Desktop/repos/secret";
+    dst = "${dst}/secret";
   };
   shortcuts = {
     name = "shortcuts";
     src = "https://github.com/rskottap/shortcuts";
-    dst = "${config.home.homeDirectory}/Desktop/repos/shortcuts";
+    dst = "${dst}/shortcuts";
   };
   nixos = {
     name = "nixos";
     src = "https://github.com/rskottap/nixos";
-    dst = "${config.home.homeDirectory}/Desktop/repos/nixos";
+    dst = "${dst}/nixos";
   };
 
   # List of all repos for looping
@@ -92,29 +94,20 @@ in {
   '';
 
   # NOTE: On NIXOS simply rm /etc/nixos and symlink it to your own nixos repo (wherever it lives)
-  # home.activation.setupNixosSymlinks = lib.hm.dag.entryAfter ["setupShortcuts"] ''
-  #   if [ -d /etc/nixos ] && [ -f "${nixos.dst}/configuration.nix" ]; then
-  #     sudo rm -rf /etc/nixos
-  #     sudo ln -svf ${nixos.dst} /etc/nixos
-  #     echo "✅ Symlinked /etc/nixos"
-  #   fi
-  # '';
+  home.activation.setupNixosSymlinks = lib.hm.dag.entryAfter ["setupShortcuts"] ''
+    if [ -d /etc/nixos ] && [ -f "${nixos.dst}/configuration.nix" ]; then
+      sudo rm -rf /etc/nixos
+      sudo ln -svf ${nixos.dst} /etc/nixos
+      echo "✅ Symlinked /etc/nixos"
+    fi
+  '';
 
   programs.bash = {
     enable = true;
     bashrcExtra = ''
-      for config_file in \
-        "${exec.dst}/etc/bashrc" \
-        "${personal.dst}/etc/bashrc" \
-        "${secret.dst}/etc/bashrc"; do
-        [ -f "$config_file" ] && source "$config_file"
-      done
-
-      if [ -d "${personal.dst}/etc/bash_completion.d" ]; then
-        for f in "${personal.dst}"/etc/bash_completion.d/*; do
-          [ -f "$f" ] && source "$f"
-        done
-      fi
+      source "${exec.dst}/etc/bashrc"
+      source "${personal.dst}/etc/bashrc"
+      source "${secret.dst}/etc/bashrc"
     '';
   };
 
