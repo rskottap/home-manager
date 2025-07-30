@@ -115,14 +115,16 @@ in {
     gitCredentialHelper.enable = true;
   };
 
-  dconf.settings = {
-    "org/cinnamon/desktop/interface" = {
-      gtk-theme = "CBlack";
-      icon-theme = "kora-light";
+   # gtk theme for cinnamon
+  gtk = {
+    enable = true;
+    theme = {
+      name = "Nordic-darker";
+      package = pkgs.nordic;
     };
-    "org/gnome/desktop/interface" = {
-      gtk-theme = "CBlack";
-      icon-theme = "kora-light";
+    iconTheme = {
+      name = "Kora-light";
+      package = pkgs.kora-icon-theme;
     };
   };
 
