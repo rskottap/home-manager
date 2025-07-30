@@ -82,12 +82,14 @@ in {
     echo "✅ Setup Shortcuts."
   '';
 
-  home.activation.setupNixosSymlinks = lib.hm.dag.entryAfter ["setupShortcuts"] ''
-    if [ -d /etc/nixos ] && [ -f "${repos.nixos.dst}/configuration.nix" ]; then
-      sudo ln -svf "${repos.nixos.dst}/configuration.nix" /etc/nixos/configuration.nix
-      echo "✅ Symlinked NixOS configuration.nix."
-    fi
-  '';
+  # NOTE: On NIXOS simply rm /etc/nixos and symlink it to your own nixos repo (wherever it lives)
+  # home.activation.setupNixosSymlinks = lib.hm.dag.entryAfter ["setupShortcuts"] ''
+  #   if [ -d /etc/nixos ] && [ -f "${repos.nixos.dst}/configuration.nix" ]; then
+  #     sudo rm -rf /etc/nixos
+  #     sudo ln -svf ${repos.nixos.dst} /etc/nixos
+  #     echo "✅ Symlinked /etc/nixos"
+  #   fi
+  # '';
 
   programs.bash = {
     enable = true;
