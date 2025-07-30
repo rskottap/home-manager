@@ -6,10 +6,10 @@ Setup dotfiles, configs, shortcuts, preferences etc., via Home Manager.
 
 Uses the official nix installer:
 ```bash
-./install-nix-package-manager.sh install
+make nix-install
 sudo reboot
-./install-nix-package-manager.sh channel
-./install-nix-package-manager.sh home-manager
+make add-channel
+make update
 ```
 
 ## Run HM
@@ -17,5 +17,5 @@ See `home.nix`.
 Uses prefixes workflow for setting up dotfiles.
 
 ```bash
-home-manager switch --flake .
+make home
 ```
