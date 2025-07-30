@@ -36,7 +36,6 @@ in {
 
   home.username = user;
   home.homeDirectory = lib.mkDefault "/home/${user}";
-  home-manager.backupFileExtension = "backup";
   nixpkgs.config.allowUnfree = true;
   home.stateVersion = "25.05";
 
