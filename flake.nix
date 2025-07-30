@@ -28,8 +28,11 @@
 
       # For NixOS
       # Export home.nix so other flakes can use it
-      nixosModules.default = { config, pkgs, ... }: {
-        imports = [ ./home.nix ];
-      };
+    # For NixOS
+    # Export home.nix so other flakes can use it
+    nixosModules.default = { config, pkgs, ... }: {
+      imports = [ ./home.nix ];
     };
+  };
+  }
 }

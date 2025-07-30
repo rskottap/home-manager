@@ -6,7 +6,7 @@ let
   exec = {
     name = "exec";
     src = "https://github.com/thedynamiclinker/exec";
-    dst = "${config.home.homeDirectory}/Desktop/repos/exec";
+  dst = "${config.home.homeDirectory}/Desktop/repos/exec";
   };
   personal = {
     name = "personal";
