@@ -17,5 +17,8 @@
       };
       modules = [ ./home.nix ];
     };
+
+    # For NixOS
+    homeModules = ./home.nix;
   };
 }
