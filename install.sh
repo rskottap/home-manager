@@ -35,21 +35,3 @@ fi
 #     echo "Rebooting to apply group changes..."
 #     sudo reboot
 # fi
-
- if [ "$phase" == "channel" ]; then
-     # Add and update nix channel
-     nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
-     nix-channel --update
-
-     # Show version and current channels
-     nix --version
-     nix-channel --list
-fi
-
-if [ "$phase" == "home-manager" ]; then
-    # Add home manager channel and update
-    nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-    nix-channel --update
-    # Install home manager
-    nix-shell '<home-manager>' -A install
-fi
