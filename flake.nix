@@ -9,22 +9,27 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }: {
-    homeConfigurations.ramya = home-manager.lib.homeManagerConfiguration {
+  outputs = { self, nixpkgs, home-manager, ... }:
+    let
+      system  = "x86_64-linux";
       pkgs = import nixpkgs {
-        system = "x86_64-linux";
-        config.allowUnfree = true;
+        inherit system;
+        config = { allowUnfree = true; };
       };
-      modules = [
-        { home-manager.backupFileExtension = "backup"; }
-        ./home.nix
-      ];
-    };
+    in {
+      homeConfigurations = rec {
+        ramya = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./home.nix ];
+        };
 
-    # For NixOS
-    # Export home.nix so other flakes can use it
-    nixosModules.default = { config, pkgs, ... }: {
-      imports = [ ./home.nix ];
+        default = ramya;
+      };
+
+      # For NixOS
+      # Export home.nix so other flakes can use it
+      nixosModules.default = { config, pkgs, ... }: {
+        imports = [ ./home.nix ];
+      };
     };
-  };
 }
