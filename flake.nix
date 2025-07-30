@@ -16,7 +16,12 @@
         system = "x86_64-linux";
         config.allowUnfree = true;
       };
-      modules = [ ./home.nix ];
+      modules = [ 
+        ./home.nix
+        {
+          home-manager.backupFileExtension = "backup";
+        }
+      ];
     };
 
     # For NixOS
