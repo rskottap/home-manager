@@ -34,5 +34,4 @@
       imports = [ ./home.nix ];
     };
   };
-  }
 }
