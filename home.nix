@@ -4,25 +4,33 @@ let
   user = "ramya";
   
   exec = {
+    name = "exec";
     src = "https://github.com/thedynamiclinker/exec";
     dst = "${config.home.homeDirectory}/Desktop/repos/exec";
   };
   personal = {
+    name = "personal";
     src = "https://github.com/rskottap/personal";
     dst = "${config.home.homeDirectory}/Desktop/repos/personal";
   };
   secret = {
+    name = "secret";
     src = "https://github.com/rskottap/secret";
     dst = "${config.home.homeDirectory}/Desktop/repos/secret";
   };
   shortcuts = {
+    name = "shortcuts";
     src = "https://github.com/rskottap/shortcuts";
     dst = "${config.home.homeDirectory}/Desktop/repos/shortcuts";
   };
   nixos = {
+    name = "nixos";
     src = "https://github.com/rskottap/nixos";
     dst = "${config.home.homeDirectory}/Desktop/repos/nixos";
   };
+
+  # List of all repos for looping
+  repos = [ exec personal secret shortcuts nixos ];
 
   desktopDirs = [
     "${config.home.homeDirectory}/Desktop/screenshots"
@@ -57,38 +65,12 @@ in {
     export PATH="${pkgs.git}/bin:$PATH"
     export PATH="${pkgs.openssh}/bin/:$PATH"
 
-    ${lib.concatStringsSep "\n" [
-      ''
-        if [ ! -d "${exec.dst}" ]; then
-          git clone "${exec.src}" "${exec.dst}"
-          echo "✅  Cloned exec."
-        fi
-      ''
-      ''
-        if [ ! -d "${personal.dst}" ]; then
-          git clone "${personal.src}" "${personal.dst}"
-          echo "✅  Cloned personal."
-        fi
-      ''
-      ''
-        if [ ! -d "${secret.dst}" ]; then
-          git clone "${secret.src}" "${secret.dst}"
-          echo "✅  Cloned secret."
-        fi
-      ''
-      ''
-        if [ ! -d "${shortcuts.dst}" ]; then
-          git clone "${shortcuts.src}" "${shortcuts.dst}"
-          echo "✅  Cloned shortcuts."
-        fi
-      ''
-      ''
-        if [ ! -d "${nixos.dst}" ]; then
-          git clone "${nixos.src}" "${nixos.dst}"
-          echo "✅  Cloned nixos."
-        fi
-      ''
-    ]}
+    ${lib.concatMapStringsSep "\n" (repo: ''
+      if [ ! -d "${repo.dst}" ]; then
+        git clone "${repo.src}" "${repo.dst}"
+        echo "✅  Cloned ${repo.name}."
+      fi
+    '') repos}
   '';
 
   home.activation.setupDotfiles = lib.hm.dag.entryAfter ["cloneRepos"] ''
