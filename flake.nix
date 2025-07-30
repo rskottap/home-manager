@@ -23,9 +23,9 @@
 
     # For NixOS
     # Export home.nix so other flakes can use it
-    homeModules = [
-      { home-manager.backupFileExtension = "backup"; }
-      ./home.nix
-    ];
+    nixosModules.default = { config, pkgs, ... }: {
+      home-manager.backupFileExtension = "backup";
+      imports = [ ./home.nix ];
+    };
   };
 }
