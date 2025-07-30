@@ -15,11 +15,17 @@
         system = "x86_64-linux";
         config.allowUnfree = true;
       };
-      modules = [ ./home.nix ];
+      modules = [
+        { home-manager.backupFileExtension = "backup"; }
+        ./home.nix
+      ];
     };
 
     # For NixOS
     # Export home.nix so other flakes can use it
-    homeModules = ./home.nix;
+    homeModules = [
+      { home-manager.backupFileExtension = "backup"; }
+      ./home.nix
+    ];
   };
 }
