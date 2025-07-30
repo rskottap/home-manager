@@ -36,8 +36,14 @@ in {
 
   home.username = user;
   home.homeDirectory = lib.mkDefault "/home/${user}";
-  nixpkgs.config.allowUnfree = true;
+
   home.stateVersion = "25.05";
+
+  home.sessionVariables = {
+    EDITOR = "vim";
+  };
+
+  nixpkgs.config.allowUnfree = true;
 
   home.packages = with pkgs; [
     git
@@ -108,6 +114,16 @@ in {
       fi
     '';
   };
+
+  # PATH for interactive shells
+  home.sessionVariables.PATH = "${repos.exec.dst}/bin:${repos.personal.dst}/bin:${repos.secret.dst}/bin:$PATH";
+
+  # PATH for login shells
+  home.sessionPath = [
+    "${repos.exec.dst}/bin"
+    "${repos.personal.dst}/bin"
+    "${repos.secret.dst}/bin"
+  ];
 
   # ~/.config/gh
   programs.gh = {
