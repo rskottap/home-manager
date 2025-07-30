@@ -9,7 +9,7 @@
     };
   };
 
-  outputs = { nixpkgs, home-manager, ... }: {
+  outputs = { self, nixpkgs, home-manager, ... }: {
     homeConfigurations.ramya = home-manager.lib.homeManagerConfiguration {
       pkgs = import nixpkgs {
         system = "x86_64-linux";
@@ -19,6 +19,7 @@
     };
 
     # For NixOS
+    # Export home.nix so other flakes can use it
     homeModules = ./home.nix;
   };
 }
