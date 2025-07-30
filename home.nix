@@ -119,8 +119,8 @@ in {
   gtk = {
     enable = true;
     theme = {
-      name = "Nordic-darker";
-      package = pkgs.nordic;
+      name = "Mint-Y-Dark-Blue";
+      package = pkgs.mint-themes;
     };
     iconTheme = {
       name = "Kora-light";
