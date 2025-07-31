@@ -70,6 +70,8 @@ in {
       if [ ! -d "${repo.dst}" ]; then
         git clone "${repo.src}" "${repo.dst}"
         echo "✅  Cloned ${repo.name}."
+      else
+        git pull || true
       fi
     '') repos}
   '';
