@@ -87,16 +87,14 @@ in {
   };
 
   home.activation.setupShortcuts = lib.hm.dag.entryAfter ["setupDotfiles"] ''
-    export PATH="${pkgs.dconf}/bin:$PATH"
+    export PATH="${pkgs.dconf}/bin:${pkgs.python3}/bin:$PATH"
 
-    if [ -f "${shortcuts.dst}/cinnamon/custom-shortcuts-setup" ]; then
-      cd "${shortcuts.dst}/cinnamon/" && bash "./custom-shortcuts-setup"
-    fi
-    
-    if [ -f "${shortcuts.dst}/vscode/vscode-shortcuts-setup" ]; then
-      cd "${shortcuts.dst}/vscode/" && bash "./vscode-shortcuts-setup"
-    fi
-    echo "✅ Setup Shortcuts."
+    cd "${shortcuts.dst}/cinnamon/"
+    ./setup-dconf
+    ./setup-cinnamon
+    cd "${shortcuts.dst}/vscode/"
+    ./setup-vscode
+    echo "✅ Setup Cinnamon, Dconf and Vscode shortcuts."
   '';
 
   # NOTE: On NIXOS simply rm /etc/nixos and symlink it to your own nixos repo (wherever it lives)
