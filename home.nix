@@ -80,6 +80,12 @@ in {
     ln -svf "${personal.dst}/etc/gitconfig" ~/.gitconfig
   '';
 
+  home.file = {
+
+    # ~/.icons
+    ".local/share/icons/start.png".source = ./icons/start.png;
+  };
+
   home.activation.setupShortcuts = lib.hm.dag.entryAfter ["setupDotfiles"] ''
     export PATH="${pkgs.dconf}/bin:$PATH"
 
