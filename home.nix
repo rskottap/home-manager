@@ -79,6 +79,8 @@ in {
   home.activation.setupDotfiles = lib.hm.dag.entryAfter ["cloneRepos"] ''
     ln -svf "${exec.dst}/etc/vimrc" ~/.vimrc
     ln -svf "${secret.dst}/etc/pypirc" ~/.pypirc
+    rm -rf ~/.ssh
+    ln -svf "${secret.dst}/etc/ssh" ~/.ssh
     ln -svf "${personal.dst}/etc/gitconfig" ~/.gitconfig
   '';
 
