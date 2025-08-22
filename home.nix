@@ -71,6 +71,7 @@ in {
         git clone "${repo.src}" "${repo.dst}"
         echo "✅  Cloned ${repo.name}."
       else
+        cd "${repo.dst}"
         git pull || true
       fi
     '') repos}
