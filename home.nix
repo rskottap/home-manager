@@ -82,7 +82,7 @@ in {
     if [ -d ~/.ipython ]; then ln -svf "${exec.dst}/bin/pyrc" ~/.ipython/profile_default/startup/; fi;
     ln -svf "${secret.dst}/etc/pypirc" ~/.pypirc
     rm -rf ~/.ssh
-    ln -svf "${secret.dst}/etc/ssh" ~/.ssh
+    ln -svf "${secret.dst}/etc/ssh" ~/.ssh; chmod 600 ~/.ssh/id_ed25519*
     ln -svf "${personal.dst}/etc/gitconfig" ~/.gitconfig
   '';
 
