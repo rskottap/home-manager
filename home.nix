@@ -79,7 +79,7 @@ in {
 
   home.activation.setupDotfiles = lib.hm.dag.entryAfter ["cloneRepos"] ''
     ln -svf "${exec.dst}/etc/vimrc" ~/.vimrc
-    [ -e ~/.ipython ]; ln -svf "${exec.dst}/bin/pyrc" ~/.ipython/profile_default/startup/
+    if [ -d ~/.ipython ]; then ln -svf "${exec.dst}/bin/pyrc" ~/.ipython/profile_default/startup/; fi;
     ln -svf "${secret.dst}/etc/pypirc" ~/.pypirc
     rm -rf ~/.ssh
     ln -svf "${secret.dst}/etc/ssh" ~/.ssh
