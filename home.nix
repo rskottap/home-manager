@@ -90,6 +90,7 @@ in {
 
     # ~/.icons
     ".local/share/icons/start.png".source = ./icons/start.png;
+    ".local/share/icons/excalidraw.png".source = ./icons/excalidraw.png;
   };
 
   home.activation.setupShortcuts = lib.hm.dag.entryAfter ["setupDotfiles"] ''
