@@ -58,6 +58,7 @@ in {
     openssh
     dconf
     dconf-editor
+    home-manager
   ];
 
   home.activation.cloneRepos = lib.hm.dag.entryAfter ["writeBoundary" "installPackages"] ''
